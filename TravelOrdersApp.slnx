@@ -1,0 +1,11 @@
+<Solution>
+  <Project Path="TravelOrdersApp.Application/TravelOrdersApp.Application.csproj" />
+  <Project Path="TravelOrdersApp.Database/TravelOrdersApp.Database.sqlproj" Id="464a0b93-61bd-4087-8f17-718e07c20f25">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="TravelOrdersApp.Domain/TravelOrdersApp.Domain.csproj" />
+  <Project Path="TravelOrdersApp.Infrastructure/TravelOrdersApp.Infrastructure.csproj" />
+  <Project Path="TravelOrdersApp.Tests/TravelOrdersApp.Tests.csproj" />
+  <Project Path="TravelOrdersApp.Web/TravelOrdersApp.Web.csproj" />
+</Solution>
