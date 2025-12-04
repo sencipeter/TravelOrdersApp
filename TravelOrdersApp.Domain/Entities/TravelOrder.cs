@@ -29,4 +29,6 @@ public class TravelOrder:BaseEntity
     public City? StartingLocationCity { get; set; }
     public City? DestinationCity { get; set; }
     public TravelOrderState? TravelOrderState { get; set; }
+    public Transport? Transport { get; set; }
+    public List<Transport> Transports { get; set; } = new List<Transport>();
 }

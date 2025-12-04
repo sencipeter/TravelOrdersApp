@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using TravelOrdersApp.Domain.Requests;
 using TravelOrdersApp.Infrastructure;
 using TravelOrdersApp.Infrastructure.Repositories;
 using Xunit;
@@ -33,9 +34,13 @@ public class EmployeeRepositoryTests
     [Fact]
     public async Task GetEmployeeFilterByNameTest()
     {
-        var result = await _employeeRepository.GetEmployeeList(name: "horva");
+        var result = await _employeeRepository.GetEmployeeList(
+            new EmployeeFilterListRequest 
+            { 
+                Name = "horva" 
+            });
+
         Assert.NotNull(result);
         Assert.Single(result);
-
     }
 }

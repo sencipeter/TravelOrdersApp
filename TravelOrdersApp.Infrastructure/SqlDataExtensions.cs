@@ -1,11 +1,62 @@
-﻿using System.Reflection;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using Microsoft.SqlServer.Types;
+using System.Data;
+using System.Reflection;
 
 namespace TravelOrdersApp.Infrastructure;
 
-internal static class SqlDataReaderExtensions
+internal static class SqlDataExtensions
 {
+
+    public static void AddParametersFromObject(this SqlCommand command, 
+        object parameters,
+        IEnumerable<string>? ignoreList = null)
+    {
+        if (parameters == null) return;
+
+        var ignoreSet = ignoreList != null
+            ? new HashSet<string>(ignoreList, StringComparer.OrdinalIgnoreCase)
+            : new HashSet<string>();
+
+        var props = parameters.GetType().GetProperties();
+        foreach (var prop in props)
+        {
+            // Skip ignored properties
+            if (ignoreSet.Contains(prop.Name))
+                continue;
+
+            var type = prop.PropertyType;
+            // Skip navigation/nested objects (non‑primitive, non‑string, non‑SqlGeography)
+            var underlyingType = Nullable.GetUnderlyingType(type) ?? type;
+
+            if (!(underlyingType.IsPrimitive
+                  || underlyingType == typeof(string)
+                  || underlyingType == typeof(DateTime)
+                  || underlyingType == typeof(decimal)
+                  || underlyingType == typeof(Guid)
+                  || underlyingType == typeof(SqlGeography)))
+            {
+                continue; // skip navigation/nested objects
+            }
+
+            var value = prop.GetValue(parameters) ?? DBNull.Value;
+
+            if (value is SqlGeography geo)
+            {
+                // Explicitly declare UDT type
+                var p = new SqlParameter("@" + prop.Name, SqlDbType.Udt)
+                {
+                    UdtTypeName = "Geography",
+                    Value = geo
+                };
+                command.Parameters.Add(p);
+            }
+            else
+            {
+                command.Parameters.AddWithValue("@" + prop.Name, value);
+            }
+        }
+    }
 
     public static T MapToObject<T>(this SqlDataReader reader) where T : new()
     {
@@ -61,37 +112,6 @@ internal static class SqlDataReaderExtensions
         return obj;
     }
 
-    //public static T MapToObject<T>(this SqlDataReader reader) where T : new()
-    //{
-    //    var obj = new T();
-    //    var props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-    //    foreach (var prop in props)
-    //    {
-    //        if (!reader.HasColumn(prop.Name) || reader[prop.Name] is DBNull)
-    //            continue;
-
-    //        var value = reader[prop.Name];
-
-
-    //        // Special handling for geography
-    //        if (prop.PropertyType == typeof(SqlGeography))
-    //        {
-    //            prop.SetValue(obj, (SqlGeography)value);
-    //        }
-    //        else if (prop.PropertyType == typeof(string))
-    //        {
-    //            prop.SetValue(obj, Convert.ToString(value));
-    //        }
-    //        else
-    //        {
-    //            prop.SetValue(obj, Convert.ChangeType(value, prop.PropertyType));
-    //        }
-    //    }
-
-    //    return obj;
-    //}
-
     public static List<T> MapToList<T>(this SqlDataReader reader) where T : new()
     {
         var list = new List<T>();
@@ -100,15 +120,5 @@ internal static class SqlDataReaderExtensions
             list.Add(reader.MapToObject<T>());
         }
         return list;
-    }
-
-    private static bool HasColumn(this SqlDataReader reader, string columnName)
-    {
-        for (int i = 0; i < reader.FieldCount; i++)
-        {
-            if (reader.GetName(i).Equals(columnName, StringComparison.OrdinalIgnoreCase))
-                return true;
-        }
-        return false;
     }
 }
