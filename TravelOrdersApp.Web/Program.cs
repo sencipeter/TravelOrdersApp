@@ -1,4 +1,21 @@
+using Microsoft.Data.SqlClient;
+using TravelOrdersApp.Infrastructure;
+using TravelOrdersApp.Infrastructure.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Register SqlConnection factory
+builder.Services.AddTransient<IDbConnectionFactory>(sp =>
+{    
+    return new SqlConnectionFactory(builder.Configuration);
+});
+
+// Register repositories
+builder.Services.AddScoped<ICityRepository, CityRepository>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<ITransportRepository, TransportRepository>();
+builder.Services.AddScoped<ITravelOrderRepository, TravelOrderRepository>();
+builder.Services.AddScoped<ITravelOrderStateRepository, TravelOrderStateRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

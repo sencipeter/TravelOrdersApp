@@ -6,4 +6,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.3" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\TravelOrdersApp.Infrastructure\TravelOrdersApp.Infrastructure.csproj" />
+	</ItemGroup>
+	
 </Project>

@@ -9,4 +9,9 @@ public class Employee
     public DateTime DateOfBirth { get; set; }
     public string PersonalIdentificationNumber { get; set; } = string.Empty;
 
+    public string FullName { 
+        get  { 
+            return $"{FirstName} {LastName}"; 
+        } 
+    }
 }

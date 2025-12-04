@@ -1,0 +1,159 @@
+﻿@model TravelOrdersApp.Web.Models.TravelOrderAddUpdateViewModel;
+
+<div class="container mt-4">
+    @if (Model.Id == 0)
+    {
+        <h2 class="mb-4">Add Travel Order</h2>
+    }
+    else
+    {
+        <h2 class="mb-4">Edit Travel Order</h2>
+    }
+
+    <form asp-action="AddUpdate" method="post">
+        <input type="hidden" asp-for="Id" />
+        <!-- Employee -->
+        <div class="mb-3">
+            <label asp-for="EmployeeId" class="form-label">Employee</label>
+            <select asp-for="EmployeeId" class="form-select">
+                <option> </option>
+                @foreach (var item in Model.Emploees)
+                {
+                    if (item.Selected)
+                    {
+                        <option selected value="@item.Value">@item.Text</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                }
+            </select>
+            <span asp-validation-for="EmployeeId" class="text-danger"></span>
+        </div>
+
+        <!-- Starting Location -->
+        <div class="mb-3">
+            <label asp-for="StartingLocationCityId" class="form-label">Starting Location</label>
+            <select asp-for="StartingLocationCityId" class="form-select">
+                <option> </option>
+                @foreach (var item in Model.Cities)
+                {
+                    if (item.Selected)
+                    {
+                        <option selected value="@item.Value">@item.Text</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                }
+            </select>
+            <span asp-validation-for="StartingLocationCityId" class="text-danger"></span>
+        </div>
+
+        <!-- Destination -->
+        <div class="mb-3">
+            <label asp-for="DestinationCityId" class="form-label">Destination</label>
+            <select asp-for="DestinationCityId" class="form-select">
+                <option> </option>
+                @foreach (var item in Model.Cities)
+                {
+                    if (item.Selected)
+                    {
+                        <option selected value="@item.Value">@item.Text</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                }
+            </select>
+            <span asp-validation-for="DestinationCityId" class="text-danger"></span>
+        </div>
+
+        <!-- Business Trip Start -->
+        <div class="mb-3">
+            <label asp-for="BusinessTripStart" class="form-label">Start Date</label>
+            <input asp-for="BusinessTripStart" type="datetime-local" class="form-control" />
+            <span asp-validation-for="BusinessTripStart" class="text-danger"></span>
+        </div>
+
+        <!-- Business Trip End -->
+        <div class="mb-3">
+            <label asp-for="BusinessTripEnd" class="form-label">End Date</label>
+            <input asp-for="BusinessTripEnd" type="datetime-local" class="form-control" />
+            <span asp-validation-for="BusinessTripEnd" class="text-danger"></span>
+        </div>
+
+        <!-- Travel Order State -->
+        <div class="mb-3">
+            <label asp-for="TravelOrderStateId" class="form-label">Order State</label>
+            <select asp-for="TravelOrderStateId" class="form-select">
+                <option> </option>
+                @foreach (var item in Model.TravelOrderStates)
+                {
+                    if (item.Selected)
+                    {
+                        <option selected value="@item.Value">@item.Text</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                }
+            </select>
+            <span asp-validation-for="TravelOrderStateId" class="text-danger"></span>
+        </div>
+
+        <!-- Transport (multiple select) -->
+        <div class="mb-3">
+            <label asp-for="TransportIdList" class="form-label">Transport Options</label>
+            <select asp-for="TransportIdList" class="form-select" multiple>
+                @foreach (var item in Model.Transports)
+                {
+                    if (item.Selected)
+                    {
+                        <option selected value="@item.Value">@item.Text</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                }
+            </select>
+            <span asp-validation-for="TransportIdList" class="text-danger"></span>
+        </div>
+
+        @if (Model.Errors.Any())
+        {
+            <div class="alert alert-danger">
+                <h5 class="alert-heading">Validation Errors</h5>
+                <ul class="mb-0">
+                    @foreach (var error in Model.Errors)
+                    {
+                        <li>@error</li>
+                    }
+                </ul>
+            </div>
+        }
+
+        <!-- Submit -->
+        @if (Model.Id == 0)
+        {
+            <button type="submit" class="btn btn-primary">Add New</button>
+        }
+        else
+        {
+            <button type="submit" class="btn btn-primary">Update</button>
+        }
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+

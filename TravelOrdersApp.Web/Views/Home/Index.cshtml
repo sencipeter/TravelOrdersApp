@@ -1,8 +1,93 @@
-﻿@{
+﻿@model TravelOrdersApp.Web.Models.HomePageViewModel
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<header class="bg-light border-bottom mb-4">
+    <div class="container py-3">
+        <h1 class="h3 mb-0">Travel Orders</h1>
+    </div>
+</header>
+
+
+
+<main class="container">
+    <!-- Controls row: left select employees, right Add button -->
+    <div class="row align-items-center mb-3">
+        <div class="col-md-8">
+            <label for="employeeSelect" class="form-label mb-1">Employee</label>
+            <select id="employeeSelect" name="employeeSelect" class="form-select">
+                <option selected>All</option>
+                @foreach(var item in Model.Emploees)
+                {
+                    if (item.Selected)
+                    {
+                        <option selected value="@item.Value">@item.Text</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-4 d-flex justify-content-md-end mt-3 mt-md-0">
+            <a asp-action="Add" asp-controller="Home"  class="btn btn-primary">
+                Add travel order
+            </a>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">Created On</th>
+                    <th scope="col">Personal Number</th>
+                    <th scope="col">Full Name</th>
+                    <th scope="col">Date Of Birth</th>
+                    <th scope="col">Starting Location</th>
+                    <th scope="col">Destination</th>
+                    <th scope="col">Start Date and Time</th>
+                    <th scope="col">End Date and Time</th>                    
+                    <th scope="col">Travel Order State</th>
+                    <th scope="col" class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var item in Model.TravelOrders.OrderByDescending(i => i.CreatedDate))
+                {
+                    <tr>
+                        <td>@item.CreatedDate.ToString("dd. MM. yyyy HH:mm:ss")</td>
+                        <td>@item.Employee?.PersonalNumber</td>
+                        <td>@item.Employee?.FullName</td>
+                        <td>@item.Employee?.DateOfBirth.ToString("dd. MM. yyyy")</td>
+                        <td>@item.StartingLocationCity?.CityName</td>
+                        <td>@item.DestinationCity?.CityName</td>
+                        <td>@item.BusinessTripStart?.ToString("dd. MM. yyyy HH:mm:ss")</td>
+                        <td>@item.BusinessTripEnd?.ToString("dd. MM. yyyy HH:mm:ss")</td>                        
+                        <td>@item.TravelOrderState?.Name</td>
+                        <td class="text-end">
+                            <a asp-controller="Home" asp-action="AddUpdate" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary me-2">Update</a>                           
+
+                            <form asp-controller="Home"
+                                  asp-action="Delete"
+                                  asp-route-id="@item.Id"
+                                  method="post"
+                                  class="d-inline"
+                                  onsubmit="return confirm('Are you sure you want to delete this travel order?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    Delete
+                                </button>
+                            </form>
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</main>
+
+

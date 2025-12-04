@@ -231,6 +231,8 @@ public class TravelOrderRepository : ITravelOrderRepository
                                   ,EmployeeId
                                   ,Employee.FirstName as [Employee.FirstName]
                                   ,Employee.LastName as [Employee.LastName]
+                                  ,Employee.PersonalNumber as [Employee.PersonalNumber]
+                                  ,Employee.DateOfBirth as [Employee.DateOfBirth]
                                   ,StartingLocationCityId
                                   ,StartingLocationCity.CityName as [StartingLocationCity.CityName]
                                   ,DestinationCityId
